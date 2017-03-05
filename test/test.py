@@ -10,7 +10,6 @@ n_features = 1000
 n_topics = 10
 n_top_words = 20
 
-
 def print_top_words(model, feature_names, n_top_words):
     for topic_idx, topic in enumerate(model.components_):
         print("Topic #%d:" % topic_idx)
@@ -77,4 +76,3 @@ print("\nTopics in LDA model:")
 tf_feature_names = tf_vectorizer.get_feature_names()
 print_top_words(lda, tf_feature_names, n_top_words)
 
-l = []
