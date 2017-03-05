@@ -68,15 +68,15 @@ while cursor:
 
 
 comment_dicts = []
-for i in range(10):
+for i in range(10,20):
     pain_txt = simple_preprocessing(comment_list[i])
     if pain_txt != '':
+        print pain_txt
         comment_dicts.append(itp(pain_txt))
 
 from sklearn.feature_extraction import DictVectorizer
 vectorizer = DictVectorizer()
 training_data = vectorizer.fit_transform(comment_dicts)
-
 
 
 def print_top_words(model, feature_names, n_top_words):
@@ -95,5 +95,8 @@ lda = LatentDirichletAllocation(n_topics=10, max_iter=5,
                                 learning_method='online',
                                 learning_offset=50.,
                                 random_state=0)
+print len(comment_dicts)
+
 lda.fit(training_data)
+print lda.transform(training_data)
 print_top_words(lda, vectorizer.get_feature_names(), 10)

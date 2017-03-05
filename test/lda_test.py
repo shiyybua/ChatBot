@@ -25,9 +25,9 @@ def print_top_words(model, feature_names, n_top_words):
         message += " ".join([feature_names[i]
                              for i in topic.argsort()[:-n_top_words - 1:-1]])
         print(message)
-        #print data_samples[topic_idx]
+        # print data_samples[topic_idx]
         print
-        break
+
     print()
 
 
@@ -49,9 +49,9 @@ lda = LatentDirichletAllocation(n_topics=10, max_iter=5,
 lda.fit(tf)
 # components_[i, j] represents word j in topic i.
 # 就是说行代表Topic，列代表word
-print lda.components_[0]
-print lda.components_[0].argsort()
+# print lda.components_[0]
+# print lda.components_[0].argsort()
 tf_feature_names = tf_vectorizer.get_feature_names()
-print tf_feature_names[14]
-print_top_words(lda, tf_feature_names, 10)
+# print tf_feature_names[14]
+print_top_words(lda, tf_feature_names, 20)
 
