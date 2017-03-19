@@ -27,6 +27,7 @@ try:
     model = Word2Vec.load(PATH)
 except:
     model = Word2Vec.Word2Vec(brown.sents(), min_count=1)
+    model.save(PATH)
 
 print model.wv.most_similar(positive=['woman'])
 
