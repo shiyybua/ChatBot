@@ -19,4 +19,5 @@ while cursor:
     i += 1
     print i, data
 
+
 db.close()
