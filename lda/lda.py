@@ -5,12 +5,30 @@ import json
 from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
+import re
+from collections import defaultdict
+import numpy as np
 
 
 jieba.load_userdict("../resources/law_lexicon.txt")
 DATA_PATH = '/Users/mac/Desktop/law_raw_data_mini/criminal_0215.json'
 STOPWORD_PATH = '../resources/stop_word.txt'
+OUTPUT_PATH = '/Users/mac/Desktop/data.txt'
 RUN_LIMIT = 20000
+
+'''
+The document-topic-matrix is lda.transform(X), the word-topic-matrix is
+lda.components_.
+See
+http://scikit-learn.org/dev/modules/decomposition.html#latent-dirichlet-allocation-lda
+'''
+
+
+def remove_laws(line):
+    re_ = r'第[一二三四五六七八九十零百、]+[条款]'.decode('utf8')
+    line = re.sub(re_, '', line)
+    return line
+
 
 class lda_t(object):
     def __init__(self):
@@ -29,6 +47,7 @@ class lda_t(object):
                         self.preprocessing(line)
                         position += 1
                     except ValueError:
+                        print position
                         pass
 
                     if position > RUN_LIMIT:
@@ -40,6 +59,7 @@ class lda_t(object):
 
     def preprocessing(self, line):
         content = line.get('court_idea')
+        content = remove_laws(content)
         word_list = self.segment_to_words(content)
         word_list = self.remove_stop_words(word_list)
         BOW = self.build_BOW(word_list)
@@ -66,7 +86,7 @@ class lda_t(object):
         training_data = vectorizer.fit_transform(self.BOWs)
         train_tfidf = tfidf_transformer.fit_transform(training_data)
 
-        lda = LatentDirichletAllocation(n_topics=5, max_iter=5,
+        lda = LatentDirichletAllocation(n_topics=15, max_iter=50,
                                         learning_method='online',
                                         learning_offset=50.,
                                         random_state=0)
@@ -78,7 +98,11 @@ class lda_t(object):
             lda.transform(training_data) 返回的是 Document topic distribution
             每一行是doc， 每一列是topic
         '''
-        print len(lda.transform(training_data)[0])
+
+        self.classification(lda.transform(training_data))
+        # print max(lda.components_[0])
+        # print lda.transform(training_data)[0:10]
+        # print len(lda.transform(training_data)[0])
 
     def load_stop_word_list(self):
         stop_words = set()
@@ -101,6 +125,51 @@ class lda_t(object):
             print
         print
 
+
+    def classification(self, matrix):
+
+        assert matrix is not None
+        topics = [[] for _ in range(len(matrix[0]))]
+
+        for index, line in enumerate(matrix):
+            max_index = np.where(line == np.max(line))[0][0]
+            topics[max_index].append(index)
+        self.write_result_to_file(topics)
+        print topics
+
+
+    def write_result_to_file(self, topics):
+
+        output = open(OUTPUT_PATH, 'w')
+
+        def find_position(id):
+            for index, line in enumerate(topics):
+                if id in line:
+                    return index
+
+        with open(DATA_PATH,'r') as file:
+            position = 0
+            try:
+                while True:
+                    try:
+                        line = file.readline()
+                        line = json.loads(line)
+                        content = line.get('court_idea')
+                        position += 1
+
+                        topic = find_position(position)
+                        out = str(topic) + '\t' + position + '\t' + content + '\n'
+                        output.write(out.encode('utf-8'))
+
+                    except ValueError:
+                        print position
+                        pass
+
+                    if position > RUN_LIMIT:
+                        break
+            except EOFError:
+                pass
+        output.close()
 
 if __name__ == "__main__":
     l = lda_t()
