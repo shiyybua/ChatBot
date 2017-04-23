@@ -14,7 +14,7 @@ jieba.load_userdict("../resources/law_lexicon.txt")
 DATA_PATH = '/Users/mac/Desktop/law_raw_data_mini/criminal_0215.json'
 STOPWORD_PATH = '../resources/stop_word.txt'
 OUTPUT_PATH = '/Users/mac/Desktop/data.txt'
-RUN_LIMIT = 20000
+RUN_LIMIT = 50000
 
 '''
 The document-topic-matrix is lda.transform(X), the word-topic-matrix is
@@ -86,7 +86,7 @@ class lda_t(object):
         training_data = vectorizer.fit_transform(self.BOWs)
         train_tfidf = tfidf_transformer.fit_transform(training_data)
 
-        lda = LatentDirichletAllocation(n_topics=15, max_iter=50,
+        lda = LatentDirichletAllocation(n_topics=15, max_iter=80,
                                         learning_method='online',
                                         learning_offset=50.,
                                         random_state=0)
@@ -158,7 +158,7 @@ class lda_t(object):
                         position += 1
 
                         topic = find_position(position)
-                        out = str(topic) + '\t' + position + '\t' + content + '\n'
+                        out = str(topic) + '\t' + str(position) + '\t' + content + '\n'
                         output.write(out.encode('utf-8'))
 
                     except ValueError:
