@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 import cPickle
 
-kn = cPickle.load(open('./kn_smoothing','r'))
-print kn.logprob(('2','3','3'))
+kn = cPickle.load(open('./tri_gram_model','r'))
+print kn.logprob(('<start-tag2>','你好','吗'))

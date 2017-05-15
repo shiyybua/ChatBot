@@ -57,7 +57,7 @@ def build_bi_gram(line_list):
     :param line_list:
     :return:
     '''
-    start,end = '<start-tag>','</start-tag>'
+    start,end = '<start-tag>', '</start-tag>'
     line_list.insert(0,start)
     line_list.append(end)
     word_statistic(line_list)
