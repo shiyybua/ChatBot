@@ -29,7 +29,6 @@ def read_pairs():
 
 def get_pari():
     for post_id, response_id in pair_dict.items():
-        print post_id, response_id
         print 'post:', post_dict[post_id].replace(' ','')
         for id in response_id:
             print 'response', response_dict[id]

@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
 from nltk.translate import AlignedSent, IBMModel1
 import preprocess
+import dill as pickle
 bitext = []
-bitext.append(AlignedSent(['klein', 'ist', 'das', 'haus'], ['the', 'house', 'is', 'small']))
-bitext.append(AlignedSent(['das', 'haus', 'ist', 'ja', 'groß'], ['the', 'house', 'is', 'big']))
-bitext.append(AlignedSent(['das', 'buch', 'ist', 'ja', 'klein'], ['the', 'book', 'is', 'small']))
-bitext.append(AlignedSent(['das', 'haus'], ['the', 'house']))
-bitext.append(AlignedSent(['das', 'buch'], ['the', 'book']))
-bitext.append(AlignedSent(['ein', 'buch'], ['a', 'book']))
 
-# ibm1 = IBMModel1(bitext, 50)
+
 # print(ibm1.translation_table['buch']['book'])
 
 post_dict = preprocess.post_dict
@@ -19,7 +14,12 @@ pair_dict = preprocess.pair_dict
 for post_id, response_ids in pair_dict.items():
     post = post_dict[post_id]
     responses = [response_dict[id] for id in response_ids]
-    print post
-    print
-    for x in responses:
-        print x
+    post = post.split(' ')
+
+    for id in response_ids:
+        bitext.append(AlignedSent(post,response_dict[id].split(' ')))
+
+
+ibm1 = IBMModel1(bitext, 50)
+table = ibm1.translation_table
+pickle.dump(table, open("./ibm_model", 'w'))
