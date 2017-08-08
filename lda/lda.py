@@ -11,10 +11,10 @@ import numpy as np
 
 
 jieba.load_userdict("../resources/law_lexicon.txt")
-DATA_PATH = '/Users/mac/Desktop/law_raw_data_mini/criminal_0215.json'
+DATA_PATH = '/home/cai/Desktop/mini_law.json'
 STOPWORD_PATH = '../resources/stop_word.txt'
-OUTPUT_PATH = '/Users/mac/Desktop/data.txt'
-RUN_LIMIT = 50000
+OUTPUT_PATH = '/home/cai/Desktop/data.txt'
+RUN_LIMIT = 18000
 
 '''
 The document-topic-matrix is lda.transform(X), the word-topic-matrix is
@@ -86,7 +86,7 @@ class lda_t(object):
         training_data = vectorizer.fit_transform(self.BOWs)
         train_tfidf = tfidf_transformer.fit_transform(training_data)
 
-        lda = LatentDirichletAllocation(n_topics=15, max_iter=80,
+        lda = LatentDirichletAllocation(n_topics=15, max_iter=10,
                                         learning_method='online',
                                         learning_offset=50.,
                                         random_state=0)
